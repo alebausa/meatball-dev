@@ -12,7 +12,8 @@ p {
   margin: 15px 0;
 }
 
-#start-page {
+#start-page,
+#lose-page {
   height: 600px;
   width: 1000px;
   display: flex;
@@ -28,7 +29,12 @@ p {
   color: white;
 }
 
-button#start {
+#lose-page {
+  display: none;
+}
+
+button#start,
+button#start-again {
   padding: 15px 30px;
   border-radius: 30px;
   font-size: 20px;
@@ -37,7 +43,8 @@ button#start {
   background-color: lightgoldenrodyellow;
 }
 
-button#start:hover {
+button#start:hover,
+button#start-again:hover {
   background: linear-gradient(0deg, rgba(221, 218, 154, 1) 0%, rgba(2, 123, 199, 1) 100%);
   color: white;
 }
@@ -57,5 +64,5 @@ canvas {
 }
 
 .shown {
-  display: block;
+  display: flex;
 }

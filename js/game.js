@@ -6,7 +6,6 @@ class Game{
     this.intervalFall = undefined;
     this.droplets = [];
     this.points = 0;
-    this.animationFrame = undefined;
   }
 
   _drawMeatball() {
@@ -68,8 +67,8 @@ class Game{
         )
       ) {
         if (droplet.role === 'food') {
-          this.meatball.width = this.meatball.width + 10;
-          this.meatball.height = this.meatball.height + 10;
+          this.meatball.width = this.meatball.width + 15;
+          this.meatball.height = this.meatball.height + 15;
           this.points++;
         } else if (droplet.role === 'poison') {
           this.meatball.width = this.meatball.width - 10;
@@ -77,6 +76,7 @@ class Game{
           this.points--;
         }
         if (this.points < 0) {
+          console.log('You lose!');
           this.gameOver()
         }
         let index = this.droplets.indexOf(droplet);
@@ -85,21 +85,19 @@ class Game{
     })
   }
 
+  gameOver() {
+    clearInterval(this.intervalFall);
+    clearInterval(this.intervalGame);
+    const losePage = document.getElementById('lose-page');
+    losePage.style = "display: flex;"
+    const canvas = document.getElementById('canvas');
+    canvas.style = "display: none;"
+  }
+
   _writeScore() {
     this.ctx.fillStyle = 'white';
     this.ctx.font = "20px Verdana";
     this.ctx.fillText(`Points: ${this.points}`, 870, 550);
-  }
-
-  gameOver() {
-    this.ctx.clearRect(0, 0, 1000, 600);
-    this.ctx.fillStyle = 'white';
-    this.ctx.font = "50px Verdana";
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText(`YOU LOSE SUCKER`, 470, 250);
-    clearInterval(this.intervalFall);
-    clearInterval(this.intervalGame);
-    cancelAnimationFrame(this.animationFrame);
   }
 
   _clean() {
@@ -120,7 +118,7 @@ class Game{
       }
     }, 2000);
     // window.requestAnimationFrame(this._update.bind(this)); // Same thing
-    this.animationFrame = window.requestAnimationFrame(() => this._update());
+    window.requestAnimationFrame(() => this._update());
   }
 
   start() {
@@ -128,7 +126,7 @@ class Game{
     this.intervalGame = setInterval(() => {
       this._generateDroplet();
     }, 1000);
-    this.animationFrame = window.requestAnimationFrame(() => this._update());
+    window.requestAnimationFrame(() => this._update());
   }
 
 }
