@@ -125,7 +125,6 @@ class Game{
       console.log('New enemy');
       this._generateDroplet();
     }, 1000);
-    window.requestAnimationFrame(() => this._update());
+    this._update();
   }
-
 }
