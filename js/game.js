@@ -9,12 +9,9 @@ class Game{
   }
 
   _drawMeatball() {
-    // Si pintamos círculos
-    // this.ctx.beginPath()
+    // Si pintamos rectángulos
     // this.ctx.fillStyle = "darkred";
-    // this.ctx.arc(this.meatball.x, this.meatball.y, this.meatball.width, 0, 2 * Math.PI);
-    // this.ctx.fill();
-    // this.ctx.closePath()
+    // this.ctx.fillRect(this.meatball.x, this.meatball.y, this.meatball.width, this.meatball.height);
     this.ctx.drawImage(meatball, this.meatball.x, this.meatball.y, this.meatball.width, this.meatball.height);
   }
 
@@ -67,17 +64,15 @@ class Game{
         )
       ) {
         if (droplet.role === 'food') {
-          this.meatball.width = this.meatball.width + 15;
-          this.meatball.height = this.meatball.height + 15;
+          this.meatball._increase();
           this.points++;
         } else if (droplet.role === 'poison') {
-          this.meatball.width = this.meatball.width - 10;
-          this.meatball.height = this.meatball.height - 10;
+          this.meatball._decrease();
           this.points--;
         }
         if (this.points < 0) {
           console.log('You lose!');
-          this.gameOver()
+          this.gameOver();
         }
         let index = this.droplets.indexOf(droplet);
         this.droplets.splice(index, 1);
@@ -89,7 +84,7 @@ class Game{
     clearInterval(this.intervalFall);
     clearInterval(this.intervalGame);
     const losePage = document.getElementById('lose-page');
-    losePage.style = "display: flex;"
+    losePage.style = "display: flex";
     const canvas = document.getElementById('canvas');
     canvas.style = "display: none;"
   }
@@ -110,9 +105,11 @@ class Game{
     this._drawDroplets();
     this._checkCollisions();
     this._writeScore();
+    // Start the fall of the enemies
     let counter = 0;
     this.intervalFall = setInterval(() => { 
       if (counter < this.droplets.length) {
+        console.log('New enemy falling!')
         this.droplets[counter]._fallDown();
         counter++;
       }
@@ -123,7 +120,9 @@ class Game{
 
   start() {
     this._assignControls();
+    // Start the enemy generation
     this.intervalGame = setInterval(() => {
+      console.log('New enemy');
       this._generateDroplet();
     }, 1000);
     window.requestAnimationFrame(() => this._update());
