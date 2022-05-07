@@ -28,13 +28,17 @@ class Game{
   }
 
   _generateDroplet() {
+    // Genero
     const newDroplet = new Droplet(50, 50);
+    // Aplico efectos if necessary
     newDroplet._asignRole();
     newDroplet._assignImage();
+    // Añado al array del constructor
     this.droplets.push(newDroplet);
   }
 
   _assignControls() {
+    // Controles del teclado
     document.addEventListener('keydown', (event) => {
       switch (event.code) {
         case 'ArrowLeft':
@@ -53,16 +57,20 @@ class Game{
     this.droplets.forEach(droplet => {
       if (
         (
+          // Compruebo si mi meatball está dentro de la X + width del droplet
           this.meatball.x >= droplet.x && this.meatball.x <= droplet.x + droplet.width ||
           this.meatball.x + this.meatball.width >= droplet.x && this.meatball.x + this.meatball.width <= droplet.x + droplet.width ||
+          // Incluso si mi meatball es más grande que el droplet
           droplet.x >= this.meatball.x && droplet.x <= this.meatball.x + this.meatball.width
         ) &&
         (
+          // Lo mismo con el eje Y
           this.meatball.y >= droplet.y && this.meatball.y <= droplet.y + droplet.height ||
           this.meatball.y + this.meatball.height >= droplet.y && this.meatball.y + this.meatball.height <= droplet.y + droplet.height ||
           droplet.y >= this.meatball.y && droplet.y <= this.meatball.y + this.meatball.height
         )
       ) {
+        // Aplico efectos después de colisión
         if (droplet.role === 'food') {
           this.meatball._increase();
           this.points++;
@@ -74,6 +82,7 @@ class Game{
           console.log('You lose!');
           this.gameOver();
         }
+        // Elimino elementos de mi array cuando ya han colisionado
         let index = this.droplets.indexOf(droplet);
         this.droplets.splice(index, 1);
       }
@@ -81,6 +90,7 @@ class Game{
   }
 
   gameOver() {
+    // Qué tiene que ocurrir cuando pierde
     clearInterval(this.intervalFall);
     clearInterval(this.intervalGame);
     const losePage = document.getElementById('lose-page');
@@ -90,6 +100,7 @@ class Game{
   }
 
   _writeScore() {
+    // Función que pinta la puntuación en el canvas
     this.ctx.fillStyle = 'white';
     this.ctx.font = "20px Verdana";
     this.ctx.fillText(`Points: ${this.points}`, 870, 550);
@@ -114,7 +125,7 @@ class Game{
         counter++;
       }
     }, 2000);
-    // window.requestAnimationFrame(this._update.bind(this)); // Same thing
+    // window.requestAnimationFrame(this._update.bind(this)); // Es lo mismo que ponerlo con arrow function
     window.requestAnimationFrame(() => this._update());
   }
 

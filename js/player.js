@@ -31,6 +31,4 @@ class Player{
     this.height = this.height - 15;
     this.y = this.y + 5;
   }
-
-  
 }
