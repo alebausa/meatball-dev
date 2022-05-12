@@ -54,8 +54,8 @@ canvas {
   display: block;
   margin: 0 auto;
   margin-top: 30px;
-  background-image: url('../img/bg.jpeg');
-  background-size: cover;
+  /* background-image: url('../img/bg.jpeg');
+  background-size: cover; */
   margin-bottom: 50px;
 }
 

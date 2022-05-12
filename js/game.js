@@ -1,18 +1,30 @@
 class Game{
-  constructor(ctx) {
+  constructor(ctx, cwidth, cheight) {
     this.ctx = ctx;
-    this.meatball = new Player(500, 400, 40, 40);
+    this.canvasWidth = cwidth;
+    this.canvasHeight = cheight;
+    this.meatball = new Player(500, 400, 100, 100);
     this.intervalGame = undefined;
     this.intervalFall = undefined;
     this.droplets = [];
     this.points = 0;
+    // Sounds
+    this.collisionSound = new sound('./sounds/grow.wav');
+    // Parallax layer 1 (floor)
+    this.bgLayer1 = new Layer(497, 103, 15);
+    // Parallax layer 2 (background with mountains)
+    this.bgLayer2 = new Layer(0, 504, 9);
+    // Explosion
+    this.explosionInterval = undefined;
+    this.explosion = undefined;
   }
 
   _drawMeatball() {
     // Si pintamos rectángulos
     // this.ctx.fillStyle = "darkred";
     // this.ctx.fillRect(this.meatball.x, this.meatball.y, this.meatball.width, this.meatball.height);
-    this.ctx.drawImage(meatball, this.meatball.x, this.meatball.y, this.meatball.width, this.meatball.height);
+    this.ctx.drawImage(this.meatball.image, 187, 28, 461, 426, this.meatball.x, this.meatball.y, this.meatball.width, this.meatball.height);
+    
   }
 
   _drawDroplets() {
@@ -26,6 +38,20 @@ class Game{
       this.ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
     })
   }
+
+  _drawExplosion() {
+    if (this.explosion) {
+      this.ctx.drawImage(this.explosion, this.meatball.x + (this.meatball.width / 2)-100, this.meatball.y-130, 200, 200);
+    }
+  }
+
+  _drawBackground() {
+    this.ctx.drawImage(backgroundLayer1, this.bgLayer1.x, this.bgLayer1.y, this.bgLayer1.width, this.bgLayer1.height);
+    this.ctx.drawImage(backgroundLayer1, this.bgLayer1.x2, this.bgLayer1.y, this.bgLayer1.width, this.bgLayer1.height);
+    this.ctx.drawImage(backgroundLayer2, this.bgLayer2.x, this.bgLayer2.y, this.bgLayer2.width, this.bgLayer2.height);
+    this.ctx.drawImage(backgroundLayer2, this.bgLayer2.x2, this.bgLayer2.y, this.bgLayer2.width, this.bgLayer2.height);
+  }
+
 
   _generateDroplet() {
     // Genero
@@ -43,9 +69,19 @@ class Game{
       switch (event.code) {
         case 'ArrowLeft':
           this.meatball.moveLeft();
+          if( this.bgLayer1.speed > 0 ){
+            this.bgLayer1.speed *= -1;
+            this.bgLayer2.speed *= -1;
+          }
+          this._animateBackground();
           break;
         case 'ArrowRight':
           this.meatball.moveRight();
+          if( this.bgLayer1.speed < 0 ){
+            this.bgLayer1.speed *= -1;
+            this.bgLayer2.speed *= -1;
+          }
+          this._animateBackground();
           break;
         default:
           break;
@@ -72,10 +108,14 @@ class Game{
       ) {
         // Aplico efectos después de colisión
         if (droplet.role === 'food') {
+          this.collisionSound.play();
+          this._applyExplosion();
           this.meatball._increase();
           this.points++;
         } else if (droplet.role === 'poison') {
+          this.collisionSound.play();
           this.meatball._decrease();
+          this._applyExplosion();
           this.points--;
         }
         if (this.points < 0) {
@@ -110,17 +150,41 @@ class Game{
     this.ctx.clearRect(0, 0, 1000, 600);
   }
 
+  _animateBackground() {
+    this.bgLayer1._update();
+    this.bgLayer2._update();
+  }
+
+  _applyExplosion() {
+    let counter = 0;
+    // Cambio la explosión de pintado rápido cada 0,04 segundos
+    this.explosionInterval = setInterval(() => {
+      if (counter < explosions.length) {
+        this.explosion = explosions[counter];
+        counter++;
+      }
+      // Si ya he acabado el array de steps, paro y reinicio para la siguiente explosión
+      if (counter == explosions.length) {
+        this.explosion = undefined;
+        clearInterval(this.explosionInterval);
+        counter = 0;
+      }
+    }, 40);
+  }
+
   _update() {
     this._clean();
+    this._drawBackground();
+    // this._animateBackground();
     this._drawMeatball();
     this._drawDroplets();
+    this._drawExplosion();
     this._checkCollisions();
     this._writeScore();
     // Start the fall of the enemies
     let counter = 0;
     this.intervalFall = setInterval(() => { 
       if (counter < this.droplets.length) {
-        console.log('New enemy falling!')
         this.droplets[counter]._fallDown();
         counter++;
       }
@@ -133,7 +197,6 @@ class Game{
     this._assignControls();
     // Start the enemy generation
     this.intervalGame = setInterval(() => {
-      console.log('New enemy');
       this._generateDroplet();
     }, 1000);
     this._update();
