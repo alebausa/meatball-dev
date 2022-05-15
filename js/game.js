@@ -11,9 +11,9 @@ class Game{
     // Sounds
     this.collisionSound = new sound('./sounds/grow.wav');
     // Parallax layer 1 (floor)
-    this.bgLayer1 = new Layer(497, 103, 15);
+    this.bgLayer1 = new Layer(497, 103, 5);
     // Parallax layer 2 (background with mountains)
-    this.bgLayer2 = new Layer(0, 504, 9);
+    this.bgLayer2 = new Layer(0, 504, 1);
     // Explosion
     this.explosionInterval = undefined;
     this.explosion = undefined;
@@ -69,19 +69,22 @@ class Game{
       switch (event.code) {
         case 'ArrowLeft':
           this.meatball.moveLeft();
-          if( this.bgLayer1.speed > 0 ){
-            this.bgLayer1.speed *= -1;
-            this.bgLayer2.speed *= -1;
-          }
-          this._animateBackground();
+          // if( this.bgLayer1.speed > 0 ){
+          //   this.bgLayer1.speed *= -1;
+          //   this.bgLayer2.speed *= -1;
+          // }
+          // this._animateBackground();
           break;
         case 'ArrowRight':
           this.meatball.moveRight();
-          if( this.bgLayer1.speed < 0 ){
-            this.bgLayer1.speed *= -1;
-            this.bgLayer2.speed *= -1;
-          }
-          this._animateBackground();
+          // if( this.bgLayer1.speed < 0 ){
+          //   this.bgLayer1.speed *= -1;
+          //   this.bgLayer2.speed *= -1;
+          // }
+          // this._animateBackground();
+          break;
+        case 'Space':
+          this.meatball.jump();
           break;
         default:
           break;
@@ -175,7 +178,7 @@ class Game{
   _update() {
     this._clean();
     this._drawBackground();
-    // this._animateBackground();
+    this._animateBackground();
     this._drawMeatball();
     this._drawDroplets();
     this._drawExplosion();
