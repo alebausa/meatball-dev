@@ -1,5 +1,5 @@
 class Player{
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, floorBackgroundY) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -13,6 +13,7 @@ class Player{
     this.speed = -11;
     this.onTheGround = true;
     this.jumpInterval = undefined;
+    this.floorBackgroundY = floorBackgroundY;
   }
 
   moveRight() {
@@ -49,10 +50,10 @@ class Player{
     }
 
   _checkIfOnFloor() {
-    if (this.y > 497 - this.height) { // If my character has reached the floor, reset parameters for next jump
+    if (this.y > this.floorBackgroundY - this.height) { // If my character has reached the floor, reset parameters for next jump
       clearInterval(this.jumpInterval);
       this.jumpInterval = undefined;
-      this.y = 497 - this.height;     // The floor and Y parameters are different in each game ⚠️ mine change because my character increases when he collects a droplet
+      this.y = this.floorBackgroundY - this.height;     // The floor and Y parameters are different in each game ⚠️ mine change because my character increases when he collects a droplet
       this.drag = 0.99;
       this.gravity = 0.3;
       this.speed = -11;

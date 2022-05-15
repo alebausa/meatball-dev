@@ -3,7 +3,6 @@ class Game{
     this.ctx = ctx;
     this.canvasWidth = cwidth;
     this.canvasHeight = cheight;
-    this.meatball = new Player(500, 400, 100, 100);
     this.intervalGame = undefined;
     this.intervalFall = undefined;
     this.droplets = [];
@@ -17,6 +16,8 @@ class Game{
     // Explosion
     this.explosionInterval = undefined;
     this.explosion = undefined;
+    // Character
+    this.meatball = new Player(500, 400, 100, 100, this.bgLayer1.y);
   }
 
   _drawMeatball() {
